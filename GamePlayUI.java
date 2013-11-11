@@ -1,5 +1,4 @@
 
-
 import java.applet.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -27,11 +26,13 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     int linesDrawn = 1;
     boolean changeDirection = false;
     
-    
-    public User user1 = new User(); //will be initialized to constructors once we implement global users
+    private User user1 = new User();
     private User user2 = new User();
     
-    GameEngine game = new GameEngine(user1, user2);
+    private Player player1 = new Player(user1); //will be initialized to constructors once we implement global users
+    private Player player2 = new Player(user2);
+    
+    GameEngine game = new GameEngine(player1, player2);
     
     Label l;
     
@@ -49,7 +50,7 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     //int y0 = 200;
     
     public GameplayUI(){
-    	//takes settings as constructor
+    	//takes settings and users as constructor
     	//get settings
     	
     }
@@ -114,10 +115,10 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
         lineIndex++;
         linesDrawn++;
         
-        lines[0][lineIndex] = user1.getPositionX();
-        lines[1][lineIndex] = user1.getPositionY();
-        lines[4][lineIndex] = user2.getPositionX();
-        lines[5][lineIndex] = user2.getPositionY();
+        lines[0][lineIndex] = player1.getPositionX();
+        lines[1][lineIndex] = player1.getPositionY();
+        lines[4][lineIndex] = player2.getPositionX();
+        lines[5][lineIndex] = player2.getPositionY();
         
         
         //input text field
@@ -153,8 +154,8 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     	u2Stroke.setStroke(new BasicStroke(4));
     	u2Stroke.setColor(Color.red);
     	
-    	game.updatePosition(user1, user1.getDirection(), user1.getPositionX(), user1.getPositionY());
-    	game.updatePosition(user2, user2.getDirection(), user2.getPositionX(), user2.getPositionY());
+    	game.updatePosition(player1, player1.getDirection(), player1.getPositionX(), player1.getPositionY());
+    	game.updatePosition(player2, player2.getDirection(), player2.getPositionX(), player2.getPositionY());
     	
     	if (game.getCrashed()){
     		l.setText("CRASHED");
@@ -162,10 +163,10 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
 
     	
     	//update new position
-    	lines[2][lineIndex] = user1.getPositionX();
-    	lines[3][lineIndex] = user1.getPositionY();
-    	lines[6][lineIndex] = user2.getPositionX();
-    	lines[7][lineIndex] = user2.getPositionY();
+    	lines[2][lineIndex] = player1.getPositionX();
+    	lines[3][lineIndex] = player1.getPositionY();
+    	lines[6][lineIndex] = player2.getPositionX();
+    	lines[7][lineIndex] = player2.getPositionY();
     	
     	
     	for(int i=0; i < linesDrawn; i++){
@@ -173,8 +174,8 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     		u2Stroke.drawLine(lines[4][i], lines[5][i], lines[6][i], lines[7][i]);
     	}
     	
-    	game.updateMap(user1.getPositionX(), user1.getPositionY());
-    	game.updateMap(user2.getPositionX(), user2.getPositionY());
+    	game.updateMap(player1.getPositionX(), player1.getPositionY());
+    	game.updateMap(player2.getPositionX(), player2.getPositionY());
     	
 
     }
@@ -205,42 +206,42 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
 		int keyCode = e.getKeyCode();
 		l.setText(Integer.toString(keyCode));
 		
-		user1.setPrevDirection(user1.getDirection());
-		user2.setPrevDirection(user2.getDirection());
+		player1.setPrevDirection(player1.getDirection());
+		player2.setPrevDirection(player2.getDirection());
 		
 		if(keyCode == 37){
 			//left
-			user1.setDirection(1);
+			player1.setDirection(1);
 		}else if (keyCode == 38){
 			//up
-			user1.setDirection(2);
+			player1.setDirection(2);
 		}else if (keyCode == 39){
 			//right
-			user1.setDirection(3);
+			player1.setDirection(3);
 		}else if (keyCode == 40){
 			//down
-			user1.setDirection(4);
+			player1.setDirection(4);
 		}else if (keyCode == 65){
 			//a = left
-			user2.setDirection(1);
+			player2.setDirection(1);
 		}else if (keyCode == 87){
 			//w = up
-			user2.setDirection(2);
+			player2.setDirection(2);
 		}else if (keyCode == 68){
 			//d = right
-			user2.setDirection(3);
+			player2.setDirection(3);
 		}else if (keyCode == 83){
 			//s = down
-			user2.setDirection(4);
+			player2.setDirection(4);
 		}
 		
-		if((user1.getPrevDirection() != user1.getDirection())||(user2.getPrevDirection() != user2.getDirection())){
+		if((player1.getPrevDirection() != player1.getDirection())||(player2.getPrevDirection() != player2.getDirection())){
 			lineIndex++;
 			linesDrawn++;
-			lines[0][lineIndex] = user1.getPositionX();
-			lines[1][lineIndex] = user1.getPositionY();
-			lines[4][lineIndex] = user2.getPositionX();
-			lines[5][lineIndex] = user2.getPositionY();
+			lines[0][lineIndex] = player1.getPositionX();
+			lines[1][lineIndex] = player1.getPositionY();
+			lines[4][lineIndex] = player2.getPositionX();
+			lines[5][lineIndex] = player2.getPositionY();
 			
 		}
 		
