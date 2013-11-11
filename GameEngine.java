@@ -1,26 +1,25 @@
-
 public class GameEngine {
-	private User user1;
-	private User user2;
+	private Player Player1;
+	private Player Player2;
 	private boolean crashed = false;
 	private final int DIMENSION = 600; 
 	int[][] map = new int[DIMENSION][DIMENSION];
 
-	public GameEngine(User u1, User u2){
-		user1 = u1;
-		user2 = u2;
-		user1.setPositionX(100);
-		user1.setPositionY(200);
-		user1.setPrevPositionX(100);
-		user1.setPrevPositionY(200);
-		user1.setDirection(3);	//right
-		user1.setPrevDirection(3);
-		user2.setPositionX(300);
-		user2.setPositionY(400);
-		user2.setPrevPositionX(300);
-		user2.setPrevPositionY(400);
-		user2.setDirection(1);	//left
-		user2.setPrevDirection(1);
+	public GameEngine(Player u1, Player u2){
+		Player1 = u1;
+		Player2 = u2;
+		Player1.setPositionX(100);
+		Player1.setPositionY(200);
+		Player1.setPrevPositionX(100);
+		Player1.setPrevPositionY(200);
+		Player1.setDirection(3);	//right
+		Player1.setPrevDirection(3);
+		Player2.setPositionX(300);
+		Player2.setPositionY(400);
+		Player2.setPrevPositionX(300);
+		Player2.setPrevPositionY(400);
+		Player2.setDirection(1);	//left
+		Player2.setPrevDirection(1);
 		
 		//initialize map to empty
         for(int i=0; i < DIMENSION; i++){
@@ -40,26 +39,26 @@ public class GameEngine {
 	}
 	
 	
-	public void updatePosition(User usr, int dir, int x, int y){
+	public void updatePosition(Player plr, int dir, int x, int y){
 		
-		usr.setPrevPositionX(x);
-		usr.setPrevPositionY(y);
+		plr.setPrevPositionX(x);
+		plr.setPrevPositionY(y);
 		
-		if (usr.getDirection() == 3){
+		if (plr.getDirection() == 3){
     		//right
         	if(map[x+1][y] == 1){
         		crashed = true;
         	}else{
         		x++;
         	}
-    	}else if (usr.getDirection() == 4){
+    	}else if (plr.getDirection() == 4){
     		//down
     		if(map[x][y+1] == 1){
     			crashed = true;
     		}else{
     			y++;
     		}
-    	}else if (usr.getDirection() == 1){
+    	}else if (plr.getDirection() == 1){
     		//left
     		if(map[x-1][y] == 1){
     			crashed = true;
@@ -75,8 +74,8 @@ public class GameEngine {
     		}
     	}
 		
-		usr.setPositionX(x);
-		usr.setPositionY(y);
+		plr.setPositionX(x);
+		plr.setPositionY(y);
 		
 	}
 	
