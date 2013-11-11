@@ -1,4 +1,3 @@
-
 import java.applet.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -9,12 +8,14 @@ import javax.swing.Timer;
 
 import java.util.*;
 
-public class GameplayUI extends Applet implements KeyListener,  AdjustmentListener, ActionListener {
+public class GameplayUI extends JApplet implements KeyListener,  AdjustmentListener, ActionListener {
 	
     BufferedImage bi;
-    Graphics2D u1Stroke;
-    Graphics2D u2Stroke;
-    Timer clock;
+    Graphics2D p1Stroke;
+    Graphics2D p2Stroke;
+    Graphics2D mapStroke;
+    Timer frameClock;
+    Timer speedClock;
    // int x = 100;
     //int y = 200;
     int[][] lines = new int[8][200];
@@ -25,6 +26,8 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     int lineIndex=0;
     int linesDrawn = 1;
     boolean changeDirection = false;
+    private int strokeSize = 6;
+    private int SCALE_FACTOR = 3;
     
     private User user1 = new User();
     private User user2 = new User();
@@ -57,75 +60,51 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     
     public void start(){
     	addKeyListener(this);
-    	this.clock = new Timer(10,this);
-    	this.clock.start();
+    	this.frameClock = new Timer(10,this);
+    	this.speedClock = new Timer(30,this)
+    	this.frameClock.start();
+    	this.speedClock.start();
     }
 	
-	public void init(){
+    public void init(){
 
         setFocusable(true);
         bi = (BufferedImage) createImage(DIMENSION, DIMENSION);
-        u1Stroke = bi.createGraphics();
-        u2Stroke = bi.createGraphics();
         
-        this.setSize(900,900);
+        mapStroke = bi.createGraphics();
+    	mapStroke.setColor(Color.white);
+    	mapStroke.fillRect(0, 0, DIMENSION, DIMENSION);
+    	
+    	mapStroke.setStroke(new BasicStroke(strokeSize + 2));
+    	mapStroke.setColor(Color.black);
+        
+        p1Stroke = bi.createGraphics();
+        p1Stroke.setColor(Color.blue);
+    	p1Stroke.setStroke(new BasicStroke(strokeSize));
+    	
+        p2Stroke = bi.createGraphics();
+        p2Stroke.setColor(Color.red);
+    	p2Stroke.setStroke(new BasicStroke(strokeSize));
+
+        this.setSize(700,700);
         this.setLayout(null);
 	
         //UI
-        Panel f = new Panel();
+        JPanel f = new JPanel();
         f.setLayout(null);
         f.setBounds(DIMENSION, 0, 800, 800);
 	
-        l = new Label("WORKING");
-       // l.setText("HOW ARE YOU");
+        l = new JLabel("WORKING");
         l.setBounds(0,10,500,200);
         f.add(l);
         
-        //leftWall
-        lines[0][lineIndex] = 1;
-        lines[1][lineIndex] = 1;
-        lines[2][lineIndex] = 1;
-        lines[3][lineIndex] = DIMENSION - 1;
-        lineIndex++;
-        linesDrawn++;
+	
         
-        
-        //bottomWall
-        lines[0][lineIndex] = 1;
-        lines[1][lineIndex] = DIMENSION-1;
-        lines[2][lineIndex] = DIMENSION-1;
-        lines[3][lineIndex] = DIMENSION-1;
-        lineIndex++;
-        linesDrawn++;
-        
-        
-        //rightWall
-        lines[0][lineIndex] = DIMENSION-1;
-        lines[1][lineIndex] = 1;
-        lines[2][lineIndex] = DIMENSION-1;
-        lines[3][lineIndex] = DIMENSION-1;
-        lineIndex++;
-        linesDrawn++;
-        
-        //topWall
-        lines[0][lineIndex] = 1;
-        lines[1][lineIndex] = 1;
-        lines[2][lineIndex] = DIMENSION-1;
-        lines[3][lineIndex] = 1;
-        lineIndex++;
-        linesDrawn++;
-        
-        lines[0][lineIndex] = player1.getPositionX();
-        lines[1][lineIndex] = player1.getPositionY();
-        lines[4][lineIndex] = player2.getPositionX();
-        lines[5][lineIndex] = player2.getPositionY();
-        
-        
-        //input text field
-      /*  TextField txt = new TextField("HI THERE");
-    	txt.setSize(40,40);
-    	txt.setBounds(0,50,50,100);
-    	f.add(txt);*/
+        mapStroke.drawLine(1,1,1,DIMENSION-1);
+        mapStroke.drawLine(1,DIMENSION-1,DIMENSION-1,DIMENSION-1);
+        mapStroke.drawLine(DIMENSION-1,1,DIMENSION-1,DIMENSION-1);
+        mapStroke.drawLine(1,1,DIMENSION-1,1);
+    	mapStroke.setStroke(new BasicStroke(strokeSize));
 
         this.add(f);
     }
@@ -136,23 +115,14 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     	//super.paintComponent(g);
     	Graphics2D g2 = (Graphics2D) g;
 
-    	// clear screen
-    	u1Stroke.setColor(Color.white);
-    	u1Stroke.fillRect(0, 0, DIMENSION, DIMENSION);
-    	u2Stroke.setColor(Color.white);
-    	u2Stroke.fillRect(0, 0, DIMENSION, DIMENSION);
-
-    	updateGame();
+    	p1Stroke.drawLine(player1.getPrevPositionX()*SCALE_FACTOR, player1.getPrevPositionY()*SCALE_FACTOR, player1.getPositionX()*SCALE_FACTOR, player1.getPositionY()*SCALE_FACTOR);
+    	p2Stroke.drawLine(player2.getPrevPositionX()*SCALE_FACTOR, player2.getPrevPositionY()*SCALE_FACTOR, player2.getPositionX()*SCALE_FACTOR, player2.getPositionY()*SCALE_FACTOR);
 
     	g2.drawImage(bi, null, 0, 0);
     }
     
     
     public void updateGame(){
-    	u1Stroke.setStroke(new BasicStroke(4));
-    	u1Stroke.setColor(Color.black);
-    	u2Stroke.setStroke(new BasicStroke(4));
-    	u2Stroke.setColor(Color.red);
     	
     	game.updatePosition(player1, player1.getDirection(), player1.getPositionX(), player1.getPositionY());
     	game.updatePosition(player2, player2.getDirection(), player2.getPositionX(), player2.getPositionY());
@@ -162,17 +132,6 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     	}
 
     	
-    	//update new position
-    	lines[2][lineIndex] = player1.getPositionX();
-    	lines[3][lineIndex] = player1.getPositionY();
-    	lines[6][lineIndex] = player2.getPositionX();
-    	lines[7][lineIndex] = player2.getPositionY();
-    	
-    	
-    	for(int i=0; i < linesDrawn; i++){
-    		u1Stroke.drawLine(lines[0][i], lines[1][i], lines[2][i], lines[3][i]);
-    		u2Stroke.drawLine(lines[4][i], lines[5][i], lines[6][i], lines[7][i]);
-    	}
     	
     	game.updateMap(player1.getPositionX(), player1.getPositionY());
     	game.updateMap(player2.getPositionX(), player2.getPositionY());
@@ -185,12 +144,14 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
     }
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource()==this.clock) {
-			repaint();
-		}
-		
+    public void actionPerformed(ActionEvent e) {
+ 	if (e.getSource()==this.frameClock) {
+		repaint();
+	}else if (e.getSource() == this.speedClock){
+		updateGame();
 	}
+		
+    }
 
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
@@ -235,15 +196,7 @@ public class GameplayUI extends Applet implements KeyListener,  AdjustmentListen
 			player2.setDirection(4);
 		}
 		
-		if((player1.getPrevDirection() != player1.getDirection())||(player2.getPrevDirection() != player2.getDirection())){
-			lineIndex++;
-			linesDrawn++;
-			lines[0][lineIndex] = player1.getPositionX();
-			lines[1][lineIndex] = player1.getPositionY();
-			lines[4][lineIndex] = player2.getPositionX();
-			lines[5][lineIndex] = player2.getPositionY();
-			
-		}
+
 		
 	}
 
